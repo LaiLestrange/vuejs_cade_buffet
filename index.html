@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadê Buffet?</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Cadê Buffet?</h1>
+      <input
+        type="text"
+        v-model="searchText"
+        placeholder="Digite o nome do Buffet"
+      />
+
+      <button v-on:click="getBuffets">Procurar Buffets</button>
+
+      <div v-if="Object.entries(buffet).length > 0" id="buffet">
+        <h2>{{ buffet.company_name }}</h2>
+        <div>{{ buffet.description }}</div>
+        <div>{{ buffet.phone_number }} | {{ buffet.email }}</div>
+        <div>{{ buffet.full_address }}, {{buffet.zip_code}}</div>
+        <h3>Eventos</h3>
+        <ul>
+          <li v-for="item in buffet.event_types">
+            <div id="event_type">
+              <h4>{{ item.name }}</h4>
+              <div>{{ item.description }}</div>
+              <div>Duração: {{ item.duration }}min</div>
+              <div>
+                De {{ item.min_guests }} a {{ item.max_guests}} convidados
+              </div>
+              <div>Cardápio: {{ item.menu }}</div>
+              <div v-if="item.location == false">
+                Localização: {{ buffet.full_address }}
+              </div>
+              <div v-if="item.location == true">
+                Você pode escolher o endereço do evento!!
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div id="availability">
+          <h3>Checar disponibilidade do Buffet</h3>
+          <div>
+            <label for="event_date">Data do Evento: </label>
+            <input
+              type="date"
+              id="event_date"
+              v-model="checkAvailability_date"
+            />
+          </div>
+
+          <div>
+            <label for="guests">Quantidade de Convidados: </label>
+            <input
+              type="number"
+              id="guests"
+              v-model="checkAvailability_guests"
+            />
+          </div>
+
+          <div>
+            <label for="cb_event_types">Evento: </label>
+            <div
+              v-for="item, index in buffet.event_types"
+              :key="index"
+              id="cb_event_types"
+            >
+              <label :for="`radio-${index}`">{{ item.name }}</label>
+              <input
+                type="radio"
+                :id="`radio-${index}`"
+                :value="item.id"
+                v-model="checkAvailability_event"
+              />
+            </div>
+          </div>
+
+          <button v-on:click="checkAvailability">Confirmar</button>
+
+          <div id="availabilityResult">
+            {{ checkedAvailability.availability }}
+            <div v-if="checkedAvailability.available">
+              Valor mínimo: R${{ checkedAvailability.base_price }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else-if="listBuffets.length <= 0">Nenhum Buffet encontrado!</div>
+      <div id="buffets">
+        <ul>
+          <li v-for="item in listBuffets">
+            <div id="buffet">
+              <h4>{{ item.brand_name }}</h4>
+              <div>{{ item.description }}</div>
+              <div>{{ item.phone_number }} | {{ item.email }}</div>
+              <div>{{ item.full_address }}, {{item.zip_code}}</div>
+              <button v-on:click="getBuffet(item.id)">Ver mais detalhes</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
